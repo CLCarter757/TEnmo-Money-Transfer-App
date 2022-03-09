@@ -19,6 +19,9 @@ public class Transfer {
     @Positive
     private double amount;
 
+    public Transfer() {
+
+    }
     public Transfer(Long transferId, Long transferTypeId, Long transferStatusId, Long accountFrom, Long accountTo, double amount) {
         this.transferId = transferId;
         this.transferTypeId = transferTypeId;
