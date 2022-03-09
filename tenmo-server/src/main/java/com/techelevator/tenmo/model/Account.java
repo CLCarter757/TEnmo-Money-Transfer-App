@@ -11,7 +11,7 @@ public class Account {
 
     @NotNull
     @Min(value = 0)
-    private double balance = 1000.00;
+    private double balance;
 
     public Account(Long accountId, Long userId, double balance) {
         this.accountId = accountId;
