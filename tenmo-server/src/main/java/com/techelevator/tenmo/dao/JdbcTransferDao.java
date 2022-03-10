@@ -62,21 +62,28 @@ public class JdbcTransferDao implements TransferDao {
     public List<Transfer> listUserTransfers(String username) throws UserNotFoundException {
         List<Transfer> transfers = new ArrayList<>();
 
-        String sql = "SELECT * FROM transfer " +
+        try {
+            String sql = "SELECT * FROM transfer " +
                     "JOIN account AS account_from ON transfer.account_from = account_from.account_id " +
                     "JOIN account AS account_to ON transfer.account_to = account_to.account_id " +
                     "JOIN tenmo_user AS user_from ON account_from.user_id = user_from.user_id " +
                     "JOIN tenmo_user AS user_to ON account_to.user_id = user_to.user_id " +
-                    "WHERE username = ?;";
+                    "WHERE username = ? " +
+                    "ORDER BY transfer_id;";
 
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
 
-        while (results.next()) {
-            Transfer transfer = mapRowToTransfer(results);
-            transfers.add(transfer);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
+
+            while (results.next()) {
+                Transfer transfer = mapRowToTransfer(results);
+                transfers.add(transfer);
+            }
+
+            return transfers;
+
+        } catch (Exception e) {
+            throw new UserNotFoundException();
         }
-
-        return transfers;
     }
 
 

@@ -6,7 +6,7 @@ public interface AccountDao {
 
     double getBalanceByUser (Long accountId, String username) throws AccountNotFoundException;
 
-    Long getUserIdByAccountId (Long accountId);
+    Long getUserIdByAccountId (Long accountId) throws AccountNotFoundException;
 
     double increaseBalance (double amount, Long accountId) throws AccountNotFoundException;
 
