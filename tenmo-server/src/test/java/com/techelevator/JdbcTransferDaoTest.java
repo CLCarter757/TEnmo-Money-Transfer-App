@@ -72,8 +72,6 @@ public class JdbcTransferDaoTest extends BaseDaoTest {
         Assert.assertEquals(2, transfers.size());
         assertTransfersMatch(TRANSFER_1, transfers.get(0));
         assertTransfersMatch(TRANSFER_3, transfers.get(1));
-
-
     }
 
     private void assertTransfersMatch (Transfer expected, Transfer actual) {

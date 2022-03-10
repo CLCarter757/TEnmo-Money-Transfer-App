@@ -11,5 +11,5 @@ public interface TransferDao {
 
     Transfer getTransfer(Long transferId) throws TransferNotFoundException;
     Transfer createTransfer (Transfer transfer) throws AccountNotFoundException, TransferNotFoundException;
-    List<Transfer> listUserTransfers(String username) throws UserNotFoundException;
+    List<Transfer> listUserTransfers(String username);
 }
