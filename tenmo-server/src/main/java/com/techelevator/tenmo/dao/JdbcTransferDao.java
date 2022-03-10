@@ -2,10 +2,14 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exception.AccountNotFoundException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
+import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JdbcTransferDao implements TransferDao {
@@ -17,7 +21,7 @@ public class JdbcTransferDao implements TransferDao {
 
 
     @Override
-    public Transfer get(Long transferId) throws TransferNotFoundException {
+    public Transfer getTransfer(Long transferId) throws TransferNotFoundException {
 
         String sql = "SELECT * FROM transfer " +
                      "WHERE transfer_id = ?;";
@@ -51,8 +55,31 @@ public class JdbcTransferDao implements TransferDao {
                            transfer.getAccountTo(),
                            transfer.getAmount());
 
-        return get(transferId);
+        return getTransfer(transferId);
     }
+
+    @Override
+    public List<Transfer> listUserTransfers(String username) throws UserNotFoundException {
+        List<Transfer> transfers = new ArrayList<>();
+
+        String sql = "SELECT * FROM transfer " +
+                    "JOIN account AS account_from ON transfer.account_from = account_from.account_id " +
+                    "JOIN account AS account_to ON transfer.account_to = account_to.account_id " +
+                    "JOIN tenmo_user AS user_from ON account_from.user_id = user_from.user_id " +
+                    "JOIN tenmo_user AS user_to ON account_to.user_id = user_to.user_id " +
+                    "WHERE username = ?;";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
+
+        while (results.next()) {
+            Transfer transfer = mapRowToTransfer(results);
+            transfers.add(transfer);
+        }
+
+        return transfers;
+    }
+
+
 
     private Boolean doesAccountExist(Long accountId) {
         String sqlAccountExists = "SELECT EXISTS (SELECT * FROM account WHERE account_id = ?);";
