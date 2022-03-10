@@ -72,6 +72,16 @@ INSERT INTO transfer_type (transfer_type_desc) VALUES ('Request');
 INSERT INTO transfer_type (transfer_type_desc) VALUES ('Send');
 
 -- TODO: add more data here
-INSERT INTO tenmo_user (username, password_hash) VALUES ('user', 'password');
+INSERT INTO tenmo_user (username, password_hash) VALUES ('user1', 'password1');
+INSERT INTO tenmo_user (username, password_hash) VALUES ('user2', 'password2');
+INSERT INTO tenmo_user (username, password_hash) VALUES ('user3', 'password3');
+--
+INSERT INTO account (user_id, balance) VALUES (1001, 0);
+INSERT INTO account (user_id, balance) VALUES (1002, 500);
+INSERT INTO account (user_id, balance) VALUES (1003, 1000);
+--
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, 2003, 2002, 500);
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, 2002, 2001, 100);
+INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, 2002, 2003, 10);
 
 COMMIT;
