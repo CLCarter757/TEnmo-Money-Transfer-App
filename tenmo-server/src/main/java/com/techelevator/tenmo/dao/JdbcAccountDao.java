@@ -16,12 +16,21 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public double getBalance(Long accountId, String username) throws AccountNotFoundException {
+    public double getBalanceByUser(Long accountId, String username) throws AccountNotFoundException {
 
         String sql = "SELECT balance FROM account " +
                      "JOIN tenmo_user USING (user_id) " +
                      "WHERE account_id = ? and username = ?;";
         double balance = jdbcTemplate.queryForObject(sql, double.class, accountId, username);
+
+        return balance;
+    }
+
+    private double getBalanceByAccount(Long accountId) throws AccountNotFoundException {
+
+        String sql = "SELECT balance FROM account " +
+                "WHERE account_id = ?;";
+        double balance = jdbcTemplate.queryForObject(sql, double.class, accountId);
 
         return balance;
     }
@@ -35,6 +44,30 @@ public class JdbcAccountDao implements AccountDao {
         Long id = jdbcTemplate.queryForObject(sql, Long.class, accountId);
         return id;
 
+    }
+
+    @Override
+    public double increaseBalance(double amount, Long accountId) throws AccountNotFoundException {
+
+        String sql = "UPDATE account " +
+                    "SET balance = balance + ? " +
+                    "WHERE account_id = ?;";
+
+        jdbcTemplate.update(sql, amount, accountId);
+
+        return getBalanceByAccount(accountId);
+    }
+
+    @Override
+    public double decreaseBalance(double amount, Long accountId) throws AccountNotFoundException {
+
+        String sql = "UPDATE account " +
+                "SET balance = balance - ? " +
+                "WHERE account_id = ?;";
+
+        jdbcTemplate.update(sql, amount, accountId);
+
+        return getBalanceByAccount(accountId);
     }
 
 
