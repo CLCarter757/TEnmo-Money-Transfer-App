@@ -3,6 +3,7 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.exception.InsufficientFundsException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
@@ -17,7 +18,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping
 @PreAuthorize("isAuthenticated()")
 
 public class AccountAndTransferController {
@@ -35,12 +36,12 @@ public class AccountAndTransferController {
     /**
      * Get a user's balance by account id
      *
-     * @param id account id
      * @return user balance
      */
-   @GetMapping("/balance/{id}")
-    public double getBalanceByUser(@PathVariable Long id, Principal principal) throws AccountNotFoundException {
-        return accountDao.getBalanceByUser(id, principal.getName());
+   @GetMapping("/balance")
+    public double getBalanceByUser(Principal principal) throws AccountNotFoundException, UserNotFoundException {
+       Long id = accountDao.getAccountIdByUsername(principal.getName());
+       return accountDao.getBalanceByUser(id, principal.getName());
     }
 
 
@@ -69,7 +70,7 @@ public class AccountAndTransferController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/transfers")
     @Transactional
-    public Transfer sendTransfer(@Valid @RequestBody Transfer transfer, Principal principal) throws UserNotFoundException, TransferNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException, AccountNotFoundException {
+    public Transfer sendTransfer(@Valid @RequestBody Transfer transfer, Principal principal) throws UserNotFoundException, TransferNotFoundException, AccountNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException {
 
         transfer.setAccountFrom(accountDao.getAccountIdByUsername(principal.getName()));
         transfer.setTransferStatusId(2L);
@@ -79,6 +80,8 @@ public class AccountAndTransferController {
         if (accountDao.getBalanceByAccount(createdTransfer.getAccountFrom()) >= createdTransfer.getAmount()) {
             accountDao.increaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountTo());
             accountDao.decreaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountFrom());
+        } else {
+            throw new InsufficientFundsException();
         }
 
         return createdTransfer;

@@ -27,7 +27,7 @@ public class AccountService {
         double balance = 0;
 
         try {
-            ResponseEntity<Double> response = restTemplate.exchange(API_BASE_URL + "/balance/" + user.getUser().getId(),
+            ResponseEntity<Double> response = restTemplate.exchange(API_BASE_URL + "/balance",
                     HttpMethod.GET, entity, double.class);
             balance = response.getBody();
             System.out.println("Your current balance is: $" + balance);

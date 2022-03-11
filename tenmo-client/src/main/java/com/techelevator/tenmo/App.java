@@ -15,7 +15,7 @@ public class App {
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
     private AuthenticatedUser currentUser;
-    private AccountService accountService = new AccountService(API_BASE_URL, currentUser);
+    private AccountService accountService;
     private TransferService transferService = new TransferService(API_BASE_URL, currentUser);
 
     public static void main(String[] args) {
@@ -61,6 +61,8 @@ public class App {
         currentUser = authenticationService.login(credentials);
         if (currentUser == null) {
             consoleService.printErrorMessage();
+        } else {
+            accountService = new AccountService(API_BASE_URL, currentUser);
         }
     }
 
