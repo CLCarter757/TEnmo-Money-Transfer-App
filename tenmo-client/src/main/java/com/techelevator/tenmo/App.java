@@ -1,11 +1,9 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.ConsoleService;
-import com.techelevator.tenmo.services.TransferService;
+import com.techelevator.tenmo.services.*;
 
 public class App {
 
@@ -16,7 +14,8 @@ public class App {
 
     private AuthenticatedUser currentUser;
     private AccountService accountService;
-    private TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+    private TransferService transferService;
+    private UserService userService;
 
     public static void main(String[] args) {
         App app = new App();
@@ -63,6 +62,8 @@ public class App {
             consoleService.printErrorMessage();
         } else {
             accountService = new AccountService(API_BASE_URL, currentUser);
+            transferService = new TransferService(API_BASE_URL, currentUser);
+            userService = new UserService(API_BASE_URL, currentUser);
         }
     }
 
@@ -99,23 +100,29 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-
             consoleService.printTransfers(transferService.listUserTransfers(), currentUser.getUser().getUsername());
-		
-	}
+            Long transferId = consoleService.promptForTransferId();
+            System.out.println(transferService.transferDetails(transferId));
+    }
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+        System.out.println("Feature coming soon!");
 		
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+		consoleService.printUsers(userService.listAllUsers());
+        Long userId = consoleService.promptForUserId();
+        double amount = consoleService.promptForAmount();
+        Transfer transfer = new Transfer();
+        transfer.setAccountTo();
+        transfer.setAmount(amount);
+        System.out.println(transferService.sendTEBucks(transfer).toString());
 		
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
+        System.out.println("Feature coming soon!");
 		
 	}
 

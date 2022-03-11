@@ -3,11 +3,9 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.util.BasicLogger;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -28,9 +26,21 @@ public class TransferService {
         this.user = user;
     }
 
-    public void sendTEBucks() {
+    public Transfer sendTEBucks(Transfer newTransfer) {
+        Transfer returnedTransfer = null;
 
+        HttpEntity<Transfer> entity = makeTransferEntity(newTransfer);
+
+        try {
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers", HttpMethod.POST, entity, Transfer.class);
+            returnedTransfer = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return returnedTransfer;
     }
+
+
 
     public Transfer[] listUserTransfers() {
         Transfer[] transfers = null;
@@ -40,15 +50,6 @@ public class TransferService {
                     HttpMethod.GET, makeAuthEntity(), Transfer[].class);
             transfers = response.getBody();
 
-            /*printTransfers(transfers);
-
-            System.out.println("---------\n" +
-                    "Please enter transfer ID to view details (0 to cancel): \n");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
-            Long transferId = Long.parseLong(input);
-
-            transferDetails(transferId, transfers);*/
 
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -56,22 +57,22 @@ public class TransferService {
         return transfers;
     }
 
-    public Transfer transferDetails(Long transferId, Transfer[] transfers) {
-        Transfer t = new Transfer();
+    public String transferDetails(Long transferId) {
+        Transfer transfer = new Transfer();
 
-        try {
-            for(Transfer transfer : transfers) {
-                if (transfer.getTransferId() == transferId) {
-                    ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfer/" + transferId,
-                            HttpMethod.GET, makeAuthEntity(), Transfer.class);
-                    t = response.getBody();
-                    t.toString();
-                }
+        if (transferId == 0) {
+            return "";
+        } else {
+            try {
+                ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers/" + transferId,
+                        HttpMethod.GET, makeAuthEntity(), Transfer.class);
+                transfer = response.getBody();
+
+            } catch (RestClientResponseException | ResourceAccessException | NullPointerException e) {
+                BasicLogger.log(e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("Transfer ID not found.");
+            return transfer.toString();
         }
-        return t;
     }
 
     private HttpEntity<Void> makeAuthEntity() {
@@ -79,6 +80,14 @@ public class TransferService {
         headers.setBearerAuth(user.getToken());
         return new HttpEntity<>(headers);
     }
+
+    private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(user.getToken());
+        return new HttpEntity<>(transfer, headers);
+    }
+
 
 
 }

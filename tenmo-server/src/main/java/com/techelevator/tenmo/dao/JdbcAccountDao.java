@@ -79,6 +79,20 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
+    public Long getAccountIdByUserId (Long userId) throws UserNotFoundException {
+
+        String sql = "SELECT account_id FROM account " +
+                     "WHERE user_id = ?;";
+
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, userId);
+
+        if (result.next()) {
+            return result.getLong("account_id");
+        }
+        throw new UserNotFoundException();
+    }
+
+    @Override
     public double increaseBalance(double amount, Long accountId) throws AccountNotFoundException {
 
         try {
