@@ -76,8 +76,6 @@ public class AccountAndTransferController {
 
         Transfer createdTransfer = transferDao.createTransfer(transfer);
 
-        //code here to check for sufficient funds
-        //createdTransfer.getAccountFrom().getBalanceByAccount()...>= createdTransfer.getAmount()
         if (accountDao.getBalanceByAccount(createdTransfer.getAccountFrom()) >= createdTransfer.getAmount()) {
             accountDao.increaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountTo());
             accountDao.decreaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountFrom());
