@@ -36,11 +36,11 @@ public class TransferService {
         Transfer[] transfers = null;
 
         try {
-            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "account/transfer/" + user.getUser().getId(),
+            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "transfers",
                     HttpMethod.GET, makeAuthEntity(), Transfer[].class);
             transfers = response.getBody();
 
-            printTransfers(transfers);
+            /*printTransfers(transfers);
 
             System.out.println("---------\n" +
                     "Please enter transfer ID to view details (0 to cancel): \n");
@@ -48,29 +48,12 @@ public class TransferService {
             String input = scanner.nextLine();
             Long transferId = Long.parseLong(input);
 
-            transferDetails(transferId, transfers);
+            transferDetails(transferId, transfers);*/
 
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return transfers;
-    }
-
-    public void printTransfers(Transfer[] transfers) {
-        System.out.println("-------------------------------------------\n" +
-                "Transfers\n" +
-                "ID          From/To                 Amount\n" +
-                "-------------------------------------------\n");
-
-        for(Transfer transfer : transfers) {
-            if(Objects.equals(user.getUser().getId(), transfer.getAccountFrom())) { //Change ids
-                System.out.println(transfer.getTransferId() + "     From: " + transfer.getUsernameFrom() +
-                        "    $" + transfer.getAmount());
-            } else if (Objects.equals(user.getUser().getId(), transfer.getAccountTo())) { //Change ids
-                System.out.println(transfer.getTransferId() + "     To: " + transfer.getUsernameFrom() +
-                        "    $" + transfer.getAmount());
-            }
-        }
     }
 
     public Transfer transferDetails(Long transferId, Transfer[] transfers) {

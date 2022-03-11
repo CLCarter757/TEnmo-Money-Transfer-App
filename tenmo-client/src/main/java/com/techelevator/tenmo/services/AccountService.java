@@ -30,7 +30,6 @@ public class AccountService {
             ResponseEntity<Double> response = restTemplate.exchange(API_BASE_URL + "/balance",
                     HttpMethod.GET, entity, double.class);
             balance = response.getBody();
-            System.out.println("Your current balance is: $" + balance);
         } catch(RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }

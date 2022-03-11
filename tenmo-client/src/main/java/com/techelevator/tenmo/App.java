@@ -92,14 +92,15 @@ public class App {
 
 	private void viewCurrentBalance() {
         try {
-            accountService.getBalance();
+            consoleService.printBalance(accountService.getBalance());
         } catch (NullPointerException e) {
-            System.out.println("Balance not found.");
+            System.out.println("Account not found.");
         }
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+
+            consoleService.printTransfers(transferService.listUserTransfers(), currentUser.getUser().getUsername());
 		
 	}
 
