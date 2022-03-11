@@ -8,11 +8,16 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
-public class AccountServices {
+public class AccountService {
 
-    private static final String API_BASE_URL = "http://localhost:8080/";
+    private static String API_BASE_URL = "http://localhost:8080/";
     private final RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser user;
+
+    public AccountService(String url, AuthenticatedUser user) {
+        API_BASE_URL = url;
+        this.user = user;
+    }
 
     public double getBalance() {
         HttpHeaders headers = new HttpHeaders();

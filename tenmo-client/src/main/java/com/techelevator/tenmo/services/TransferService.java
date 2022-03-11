@@ -14,13 +14,19 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
-public class TransferServices {
+public class TransferService {
 
-    private static final String API_BASE_URL = "http://localhost:8080/";
+    private static String API_BASE_URL = "http://localhost:8080/";
     private final RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser user;
+
+    public TransferService(String url, AuthenticatedUser user) {
+        API_BASE_URL = url;
+        this.user = user;
+    }
 
     public void sendTEBucks() {
 
@@ -28,7 +34,6 @@ public class TransferServices {
 
     public Transfer[] listUserTransfers() {
         Transfer[] transfers = null;
-
 
         try {
             ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "account/transfer/" + user.getUser().getId(),
@@ -51,18 +56,18 @@ public class TransferServices {
         return transfers;
     }
 
-    private void printTransfers(Transfer[] transfers) {
+    public void printTransfers(Transfer[] transfers) {
         System.out.println("-------------------------------------------\n" +
                 "Transfers\n" +
                 "ID          From/To                 Amount\n" +
                 "-------------------------------------------\n");
 
         for(Transfer transfer : transfers) {
-            if(user.getUser().getId() == transfer.getAccountFrom()) {
-                System.out.println(transfer.getTransferId() + "     To: " + transfer.getUsernameFrom() +
-                        "    $" + transfer.getAmount());
-            } else if (user.getUser().getId() == transfer.getAccountTo()) {
+            if(Objects.equals(user.getUser().getId(), transfer.getAccountFrom())) { //Change ids
                 System.out.println(transfer.getTransferId() + "     From: " + transfer.getUsernameFrom() +
+                        "    $" + transfer.getAmount());
+            } else if (Objects.equals(user.getUser().getId(), transfer.getAccountTo())) { //Change ids
+                System.out.println(transfer.getTransferId() + "     To: " + transfer.getUsernameFrom() +
                         "    $" + transfer.getAmount());
             }
         }
@@ -77,15 +82,7 @@ public class TransferServices {
                     ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfer/" + transferId,
                             HttpMethod.GET, makeAuthEntity(), Transfer.class);
                     t = response.getBody();
-                    System.out.println("--------------------------------------------\n" +
-                            "Transfer Details\n" +
-                            "--------------------------------------------\n" +
-                            " Id: " + t.getTransferId() + "\n" +
-                            " From: " + t.getUsernameFrom() + "\n" +
-                            " To: " + t.getUsernameTo() + "\n" +
-                            " Type: " + t.getTransferType() + "\n" +
-                            " Status: " + t.getTransferStatus() + "\n" +
-                            " Amount: " + t.getAmount() + "\n");
+                    t.toString();
                 }
             }
         } catch (Exception e) {

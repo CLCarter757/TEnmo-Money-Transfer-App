@@ -92,4 +92,17 @@ public class Transfer {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return "\n--------------------------------------------" +
+                "\nTransfer Details" +
+                "\n--------------------------------------------" +
+                "\n Id: " + transferId +
+                "\n From: " + usernameFrom +
+                "\n To: " + usernameTo +
+                "\n Type: " + transferType +
+                "\n Status: " + transferStatus +
+                "\n Amount: " + amount;
+    }
 }
