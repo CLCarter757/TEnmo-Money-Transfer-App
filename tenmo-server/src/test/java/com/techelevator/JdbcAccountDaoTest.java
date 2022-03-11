@@ -37,7 +37,6 @@ public class JdbcAccountDaoTest extends BaseDaoTest{
         sut.getBalanceByUser(2100L, "user2");
     }
 
-
     @Test
     public void getBalanceByAccount_returns_correct_amount() throws AccountNotFoundException {
         double result = sut.getBalanceByAccount(2002L);
