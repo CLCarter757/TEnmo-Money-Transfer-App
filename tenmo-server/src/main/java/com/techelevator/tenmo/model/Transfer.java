@@ -1,7 +1,9 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.Objects;
 
 public class Transfer {
 
@@ -18,6 +20,12 @@ public class Transfer {
     @NotNull
     @Positive
     private double amount;
+
+    @AssertTrue(message = "User can not transfer money to self")
+    private boolean isAccountFromDifferentFromAccountTo() {
+        return !Objects.equals(accountFrom, accountTo);
+    }
+
 
     public Transfer() {
 

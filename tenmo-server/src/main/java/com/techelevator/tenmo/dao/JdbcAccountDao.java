@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.UserNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -32,6 +33,7 @@ public class JdbcAccountDao implements AccountDao {
 
     }
 
+    @Override
     public double getBalanceByAccount(Long accountId) throws AccountNotFoundException {
 
         String sql = "SELECT balance FROM account " +
@@ -59,6 +61,21 @@ public class JdbcAccountDao implements AccountDao {
 
         throw new AccountNotFoundException();
 
+    }
+
+    @Override
+    public Long getAccountIdByUsername(String username) throws UserNotFoundException {
+
+        String sql = "SELECT account_id FROM account " +
+                     "JOIN tenmo_user USING (user_id) " +
+                     "WHERE username = ?;";
+
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, username);
+
+        if(result.next()) {
+            return result.getLong("account_id");
+        }
+        throw new UserNotFoundException();
     }
 
     @Override
