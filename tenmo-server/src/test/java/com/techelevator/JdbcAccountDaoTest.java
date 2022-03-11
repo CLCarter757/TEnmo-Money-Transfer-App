@@ -1,6 +1,7 @@
 package com.techelevator;
 
 import com.techelevator.tenmo.dao.JdbcAccountDao;
+import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.Account;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,12 +37,17 @@ public class JdbcAccountDaoTest extends BaseDaoTest{
         sut.getBalanceByUser(2100L, "user2");
     }
 
-//    Unable to test because method is private.
-//    @Test
-//    public void getBalanceByAccount_returns_correct_amount() throws AccountNotFoundException {
-//        double result = sut.getBalanceByAccount(2002L);
-//        Assert.assertEquals(500, result, 0.1);
-//    }
+
+    @Test
+    public void getBalanceByAccount_returns_correct_amount() throws AccountNotFoundException {
+        double result = sut.getBalanceByAccount(2002L);
+        Assert.assertEquals(500, result, 0.1);
+    }
+
+    @Test (expected = AccountNotFoundException.class)
+    public void getBalanceByAccount_throws_exception() throws AccountNotFoundException {
+        sut.getBalanceByAccount(1L);
+    }
 
     @Test
     public void getUserIdByAccountId_returns_correct_id() throws AccountNotFoundException {
@@ -54,6 +60,17 @@ public class JdbcAccountDaoTest extends BaseDaoTest{
     public void getUserIdByAccountId_throws_AccountNotFoundException() throws AccountNotFoundException {
         sut.getUserIdByAccountId(2100L);
 
+    }
+
+    @Test
+    public void getAccountIdByUsername_returns_correct_id() throws UserNotFoundException {
+        Long result = sut.getAccountIdByUsername("user1");
+        Assert.assertEquals(2001L, result, 0.1);
+    }
+
+    @Test (expected = UserNotFoundException.class)
+    public void getAccountByUsername_throws_exception () throws UserNotFoundException {
+        sut.getAccountIdByUsername("user");
     }
 
     @Test
