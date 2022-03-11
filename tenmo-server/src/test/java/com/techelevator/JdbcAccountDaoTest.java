@@ -36,12 +36,11 @@ public class JdbcAccountDaoTest extends BaseDaoTest{
         sut.getBalanceByUser(2100L, "user2");
     }
 
-//    Unable to test because method is private.
-//    @Test
-//    public void getBalanceByAccount_returns_correct_amount() throws AccountNotFoundException {
-//        double result = sut.getBalanceByAccount(2002L);
-//        Assert.assertEquals(500, result, 0.1);
-//    }
+    @Test
+    public void getBalanceByAccount_returns_correct_amount() throws AccountNotFoundException {
+        double result = sut.getBalanceByAccount(2002L);
+        Assert.assertEquals(500, result, 0.1);
+    }
 
     @Test
     public void getUserIdByAccountId_returns_correct_id() throws AccountNotFoundException {

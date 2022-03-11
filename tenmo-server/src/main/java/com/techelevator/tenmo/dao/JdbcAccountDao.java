@@ -32,7 +32,7 @@ public class JdbcAccountDao implements AccountDao {
 
     }
 
-    private double getBalanceByAccount(Long accountId) throws AccountNotFoundException {
+    public double getBalanceByAccount(Long accountId) throws AccountNotFoundException {
 
         String sql = "SELECT balance FROM account " +
                 "WHERE account_id = ?;";
