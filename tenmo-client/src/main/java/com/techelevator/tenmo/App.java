@@ -1,8 +1,6 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 
 public class App {
@@ -115,7 +113,8 @@ public class App {
         Long userId = consoleService.promptForUserId();
         double amount = consoleService.promptForAmount();
 
-        System.out.println(transferService.sendTEBucks(amount, userId).toString());
+        BasicTransferObject transfer = new BasicTransferObject(userId, amount);
+        System.out.println(transferService.sendTEBucks(transfer).toString());
 		
 	}
 
