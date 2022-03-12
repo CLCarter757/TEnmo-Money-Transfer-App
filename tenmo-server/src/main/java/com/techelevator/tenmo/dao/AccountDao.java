@@ -18,4 +18,6 @@ public interface AccountDao {
 
     double getBalanceByAccount(Long accountId) throws AccountNotFoundException;
 
+    Long getAccountIdByUserId (Long userId) throws UserNotFoundException;
+
 }
