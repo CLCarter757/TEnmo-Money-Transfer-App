@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.exception.InsufficientFundsException;
+import com.techelevator.tenmo.exception.InvalidTransferException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.BasicTransferObject;
@@ -92,6 +93,9 @@ public class AccountAndTransferController {
 
         Transfer createdTransfer = transferDao.createTransfer(transfer);
 
+        if(accountDao.getAccountIdByUsername(principal.getName()) == accountDao.getAccountIdByUserId(transferObject.getUserReceiver())) {
+            throw new InvalidTransferException();
+        }
         if (accountDao.getBalanceByAccount(createdTransfer.getAccountFrom()) >= createdTransfer.getAmount()) {
             accountDao.increaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountTo());
             accountDao.decreaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountFrom());
