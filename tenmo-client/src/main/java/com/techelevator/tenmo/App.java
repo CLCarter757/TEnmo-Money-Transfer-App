@@ -1,11 +1,9 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.ConsoleService;
-import com.techelevator.tenmo.services.TransferService;
+import com.techelevator.tenmo.services.*;
 
 public class App {
 
@@ -15,8 +13,9 @@ public class App {
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
     private AuthenticatedUser currentUser;
-    private AccountService accountService = new AccountService(API_BASE_URL, currentUser);
-    private TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+    private AccountService accountService;
+    private TransferService transferService;
+    private UserService userService;
 
     public static void main(String[] args) {
         App app = new App();
@@ -61,6 +60,10 @@ public class App {
         currentUser = authenticationService.login(credentials);
         if (currentUser == null) {
             consoleService.printErrorMessage();
+        } else {
+            accountService = new AccountService(API_BASE_URL, currentUser);
+            transferService = new TransferService(API_BASE_URL, currentUser);
+            userService = new UserService(API_BASE_URL, currentUser);
         }
     }
 
@@ -90,29 +93,34 @@ public class App {
 
 	private void viewCurrentBalance() {
         try {
-            accountService.getBalance();
+            consoleService.printBalance(accountService.getBalance());
         } catch (NullPointerException e) {
-            System.out.println("Balance not found.");
+            System.out.println("Account not found.");
         }
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
-	}
+            consoleService.printTransfers(transferService.listUserTransfers(), currentUser.getUser().getUsername());
+            Long transferId = consoleService.promptForTransferId();
+            System.out.println(transferService.transferDetails(transferId));
+    }
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+        System.out.println("Feature coming soon!");
 		
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+		consoleService.printUsers(userService.listAllUsers());
+        Long userId = consoleService.promptForUserId();
+        double amount = consoleService.promptForAmount();
+
+        System.out.println(transferService.sendTEBucks(amount, userId).toString());
 		
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
+        System.out.println("Feature coming soon!");
 		
 	}
 

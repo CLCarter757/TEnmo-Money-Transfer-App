@@ -1,9 +1,12 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -46,6 +49,34 @@ public class ConsoleService {
         System.out.println();
     }
 
+    public void printUsers(User[] users) {
+        System.out.println("-------------------------------------------\n" +
+                "Users\n" +
+                "ID          Name\n" +
+                "-------------------------------------------");
+        for (User user: users) {
+            System.out.println(user.getId() + " :   " + user.getUsername());
+        }
+        System.out.println("-------------------------------------------");
+    }
+
+    public Long promptForUserId() {
+        System.out.println("");
+        System.out.println("Enter ID of user you are sending to (0 to cancel):");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        return Long.parseLong(input);
+    }
+
+    public double promptForAmount() {
+        System.out.println("");
+        System.out.println("Enter amount:");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        return Double.parseDouble(input);
+    }
+
+
     public UserCredentials promptForCredentials() {
         String username = promptForString("Username: ");
         String password = promptForString("Password: ");
@@ -55,6 +86,14 @@ public class ConsoleService {
     public String promptForString(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
+    }
+
+    public Long promptForTransferId () {
+        System.out.println("");
+        System.out.println("Please enter transfer ID to view details (0 to cancel): ");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        return Long.parseLong(input);
     }
 
     public int promptForInt(String prompt) {
@@ -75,6 +114,27 @@ public class ConsoleService {
                 return new BigDecimal(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a decimal number.");
+            }
+        }
+    }
+
+    public void printBalance(double balance) {
+        System.out.println("Your current balance is: $" + balance);
+    }
+
+    public void printTransfers(Transfer[] transfers, String username) {
+        System.out.println("-------------------------------------------\n" +
+                "Transfers\n" +
+                "ID          From/To                 Amount\n" +
+                "-------------------------------------------\n");
+
+        for(Transfer transfer : transfers) {
+            if(Objects.equals(username, transfer.getUsernameFrom())) {
+                System.out.println(transfer.getTransferId() + "     To: " + transfer.getUsernameTo() +
+                        "    $" + transfer.getAmount());
+            } else if (Objects.equals(username, transfer.getUsernameTo())) {
+                System.out.println(transfer.getTransferId() + "     From: " + transfer.getUsernameFrom() +
+                        "    $" + transfer.getAmount());
             }
         }
     }

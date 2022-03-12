@@ -3,9 +3,11 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.exception.InsufficientFundsException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping
 @PreAuthorize("isAuthenticated()")
 
 public class AccountAndTransferController {
@@ -35,14 +37,24 @@ public class AccountAndTransferController {
     /**
      * Get a user's balance by account id
      *
-     * @param id account id
      * @return user balance
      */
-   @GetMapping("/balance/{id}")
-    public double getBalanceByUser(@PathVariable Long id, Principal principal) throws AccountNotFoundException {
-        return accountDao.getBalanceByUser(id, principal.getName());
+   @GetMapping("/balance")
+    public double getBalanceByUser(Principal principal) throws AccountNotFoundException, UserNotFoundException {
+       Long id = accountDao.getAccountIdByUsername(principal.getName());
+       return accountDao.getBalanceByUser(id, principal.getName());
     }
 
+
+    /**
+     * Get all users
+     *
+     * @return list of users
+     */
+    @GetMapping ("/users")
+    public List<User> listAllUsers () {
+       return userDao.findAll();
+    }
 
     /**
      * Get all transfers associated with user
@@ -69,16 +81,21 @@ public class AccountAndTransferController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/transfers")
     @Transactional
-    public Transfer sendTransfer(@Valid @RequestBody Transfer transfer, Principal principal) throws UserNotFoundException, TransferNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException, AccountNotFoundException {
-
+    public Transfer sendTransfer(@Valid @RequestBody double amount, @Valid @RequestBody Long userId, Principal principal) throws UserNotFoundException, TransferNotFoundException, AccountNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException {
+        Transfer transfer = new Transfer();
         transfer.setAccountFrom(accountDao.getAccountIdByUsername(principal.getName()));
         transfer.setTransferStatusId(2L);
+        transfer.setTransferTypeId(2L);
+        transfer.setAmount(amount);
+        transfer.setAccountTo(accountDao.getAccountIdByUserId(userId));
 
         Transfer createdTransfer = transferDao.createTransfer(transfer);
 
         if (accountDao.getBalanceByAccount(createdTransfer.getAccountFrom()) >= createdTransfer.getAmount()) {
             accountDao.increaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountTo());
             accountDao.decreaseBalance(createdTransfer.getAmount(), createdTransfer.getAccountFrom());
+        } else {
+            throw new InsufficientFundsException();
         }
 
         return createdTransfer;
