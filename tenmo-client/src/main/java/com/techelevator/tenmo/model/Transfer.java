@@ -13,6 +13,14 @@ public class Transfer {
     private String usernameTo;
     private double amount;
 
+    public Transfer() {
+    }
+
+    public Transfer(String usernameTo, double amount) {
+        this.usernameTo = usernameTo;
+        this.amount = amount;
+    }
+
     public Long getTransferId() {
         return transferId;
     }
