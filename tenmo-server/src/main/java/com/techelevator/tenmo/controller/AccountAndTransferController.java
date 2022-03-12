@@ -17,7 +17,6 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/accounts")
 @PreAuthorize("isAuthenticated()")
 
 public class AccountAndTransferController {
