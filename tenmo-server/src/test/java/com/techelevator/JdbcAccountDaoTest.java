@@ -73,6 +73,17 @@ public class JdbcAccountDaoTest extends BaseDaoTest{
     }
 
     @Test
+    public void getAccountIdByUserId_returns_correct_account_id () throws UserNotFoundException {
+        Long result = sut.getAccountIdByUserId(1003L);
+        Assert.assertEquals(2003L, result, 0.1);
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void getAccountIdByUserId_throws_exception() throws UserNotFoundException {
+        sut.getAccountIdByUserId(1L);
+    }
+
+    @Test
     public void increaseBalance_returns_correct_amount() throws AccountNotFoundException {
         double result = sut.increaseBalance(100, 2001L);
 

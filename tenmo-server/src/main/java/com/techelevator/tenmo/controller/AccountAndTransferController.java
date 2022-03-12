@@ -6,6 +6,7 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.exception.InsufficientFundsException;
 import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.exception.UserNotFoundException;
+import com.techelevator.tenmo.model.BasicTransferObject;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
@@ -81,13 +82,13 @@ public class AccountAndTransferController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/transfers")
     @Transactional
-    public Transfer sendTransfer(@Valid @RequestBody double amount, @Valid @RequestBody Long userId, Principal principal) throws UserNotFoundException, TransferNotFoundException, AccountNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException {
+    public Transfer sendTransfer(@Valid @RequestBody BasicTransferObject transferObject, Principal principal) throws UserNotFoundException, TransferNotFoundException, AccountNotFoundException, com.techelevator.tenmo.exception.AccountNotFoundException {
         Transfer transfer = new Transfer();
         transfer.setAccountFrom(accountDao.getAccountIdByUsername(principal.getName()));
         transfer.setTransferStatusId(2L);
         transfer.setTransferTypeId(2L);
-        transfer.setAmount(amount);
-        transfer.setAccountTo(accountDao.getAccountIdByUserId(userId));
+        transfer.setAmount(transferObject.getAmount());
+        transfer.setAccountTo(accountDao.getAccountIdByUserId(transferObject.getUserReceiver()));
 
         Transfer createdTransfer = transferDao.createTransfer(transfer);
 

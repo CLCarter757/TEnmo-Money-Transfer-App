@@ -1,9 +1,6 @@
 package com.techelevator.tenmo.services;
 
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
@@ -26,13 +23,14 @@ public class TransferService {
         this.user = user;
     }
 
-    public Transfer sendTEBucks(double amount, Long userId) {
+    public Transfer sendTEBucks(BasicTransferObject newTransfer) {
         Transfer returnedTransfer = null;
 
-        //HttpEntity<Transfer> entity = makeTransferEntity(newTransfer);
+        //changed input from Transfer object to 2x double and long params, what to do with entity? also change in try block
+        HttpEntity<BasicTransferObject> entity = makeTransferEntity(newTransfer);
 
         try {
-            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers", HttpMethod.POST, makeAuthEntity(), Transfer.class);
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers", HttpMethod.POST, entity, Transfer.class);
             returnedTransfer = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -81,7 +79,7 @@ public class TransferService {
         return new HttpEntity<>(headers);
     }
 
-    private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
+    private HttpEntity<BasicTransferObject> makeTransferEntity(BasicTransferObject transfer) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(user.getToken());
