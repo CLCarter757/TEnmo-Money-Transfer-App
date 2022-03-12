@@ -26,13 +26,13 @@ public class TransferService {
         this.user = user;
     }
 
-    public Transfer sendTEBucks(Transfer newTransfer) {
+    public Transfer sendTEBucks(double amount, Long userId) {
         Transfer returnedTransfer = null;
 
-        HttpEntity<Transfer> entity = makeTransferEntity(newTransfer);
+        //HttpEntity<Transfer> entity = makeTransferEntity(newTransfer);
 
         try {
-            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers", HttpMethod.POST, entity, Transfer.class);
+            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers", HttpMethod.POST, makeAuthEntity(), Transfer.class);
             returnedTransfer = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -46,7 +46,7 @@ public class TransferService {
         Transfer[] transfers = null;
 
         try {
-            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "transfers",
+            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "/transfers",
                     HttpMethod.GET, makeAuthEntity(), Transfer[].class);
             transfers = response.getBody();
 

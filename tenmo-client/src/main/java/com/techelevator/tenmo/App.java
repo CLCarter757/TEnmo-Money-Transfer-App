@@ -114,10 +114,8 @@ public class App {
 		consoleService.printUsers(userService.listAllUsers());
         Long userId = consoleService.promptForUserId();
         double amount = consoleService.promptForAmount();
-        Transfer transfer = new Transfer();
-        transfer.setAccountTo();
-        transfer.setAmount(amount);
-        System.out.println(transferService.sendTEBucks(transfer).toString());
+
+        System.out.println(transferService.sendTEBucks(amount, userId).toString());
 		
 	}
 
