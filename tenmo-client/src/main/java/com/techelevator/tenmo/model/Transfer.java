@@ -107,10 +107,10 @@ public class Transfer {
                 "\nTransfer Details" +
                 "\n--------------------------------------------" +
                 "\n Id: " + transferId +
-                "\n From: " + usernameFrom +
-                "\n To: " + usernameTo +
-                "\n Type: " + transferType +
-                "\n Status: " + transferStatus +
-                "\n Amount: " + amount;
+                "\n From: " + accountFrom +
+                "\n To: " + accountTo +
+                "\n Type: " + transferTypeId +
+                "\n Status: " + transferStatusId +
+                "\n Amount: " + String.format("%.2f",amount);
     }
 }
