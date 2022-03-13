@@ -9,6 +9,7 @@ import com.techelevator.tenmo.exception.TransferNotFoundException;
 import com.techelevator.tenmo.exception.UserNotFoundException;
 import com.techelevator.tenmo.model.BasicTransferObject;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferString;
 import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,6 +81,17 @@ public class AccountAndTransferController {
         return transferDao.getTransfer(id);
     }
 
+    @GetMapping("transfers/details/{id}")
+    public TransferString getTransferStrings(@PathVariable Long id) throws TransferNotFoundException {
+        return transferDao.getTransferStrings(id);
+    }
+
+    @GetMapping("/transfers/details")
+    public List<TransferString> listUserTransferStrings(Principal principal) throws UserNotFoundException {
+
+        return transferDao.listUserTransferStrings(principal.getName());
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/transfers")
     @Transactional
@@ -106,9 +118,5 @@ public class AccountAndTransferController {
         return createdTransfer;
 
     }
-
-
-
-
-
+    
 }

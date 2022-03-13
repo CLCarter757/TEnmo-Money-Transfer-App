@@ -111,6 +111,6 @@ public class Transfer {
                 "\n To: " + accountTo +
                 "\n Type: " + transferTypeId +
                 "\n Status: " + transferStatusId +
-                "\n Amount: " + String.format("%.2f",amount);
+                "\n Amount: $" + String.format("%.2f",amount);
     }
 }

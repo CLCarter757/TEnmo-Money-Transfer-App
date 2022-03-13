@@ -40,29 +40,87 @@ public class TransferService {
 
 
 
-    public Transfer[] listUserTransfers() {
+    public TransferString[] listUserTransfers() {
         Transfer[] transfers = null;
+        TransferString[] strings = null;
 
         try {
             ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "/transfers",
                     HttpMethod.GET, makeAuthEntity(), Transfer[].class);
             transfers = response.getBody();
 
+
+
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-        return transfers;
+
+        for (int i = 0; i < transfers.length; i++) {
+            strings[i] = createTransferStrings(transfers[i]);
+        }
+
+        return strings;
     }
 
+    public TransferString[] listUserTransferStrings() {
+        TransferString[] strings = null;
+
+        try {
+            ResponseEntity<TransferString[]> response = restTemplate.exchange(API_BASE_URL + "/transfers/details",
+                    HttpMethod.GET, makeAuthEntity(), TransferString[].class);
+            strings = response.getBody();
+
+
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return strings;
+    }
+
+
+    public TransferString createTransferStrings(Transfer transfer) {
+        TransferString string = null;
+
+        try {
+            ResponseEntity<TransferString> response = restTemplate.exchange(API_BASE_URL + "transfers/details/" + transfer.getTransferId(),
+                    HttpMethod.GET, makeAuthEntity(), TransferString.class);
+
+            string = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+
+        return string;
+}
+
     public String transferDetails(Long transferId) {
-        Transfer transfer = new Transfer();
+        TransferString transfer = new TransferString();
 
         if (transferId == 0) {
             return "";
         } else {
             try {
-                ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/transfers/" + transferId,
-                        HttpMethod.GET, makeAuthEntity(), Transfer.class);
+                ResponseEntity<TransferString> response = restTemplate.exchange(API_BASE_URL + "/transfers/details/" + transferId,
+                        HttpMethod.GET, makeAuthEntity(), TransferString.class);
+                transfer = response.getBody();
+
+            } catch (RestClientResponseException | ResourceAccessException | NullPointerException e) {
+                BasicLogger.log(e.getMessage());
+            }
+            return transfer.toString();
+        }
+    }
+    public String transferDetailString(Long transferId) {
+        TransferString transfer = new TransferString();
+
+        if (transferId == 0) {
+            return "";
+        } else {
+            try {
+                ResponseEntity<TransferString> response = restTemplate.exchange(API_BASE_URL + "/transfers/details/" + transferId,
+                        HttpMethod.GET, makeAuthEntity(), TransferString.class);
                 transfer = response.getBody();
 
             } catch (RestClientResponseException | ResourceAccessException | NullPointerException e) {

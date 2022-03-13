@@ -98,7 +98,7 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-            consoleService.printTransfers(transferService.listUserTransfers());
+            consoleService.printTransfers(transferService.listUserTransferStrings(), currentUser.getUser().getUsername());
             Long transferId = consoleService.promptForTransferId();
             System.out.println(transferService.transferDetails(transferId));
     }

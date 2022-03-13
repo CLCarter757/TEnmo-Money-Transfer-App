@@ -87,13 +87,4 @@ public class Transfer {
         this.amount = amount;
     }
 
-/*    @Override
-    public String toString() {
-        return  "\n ----------------------------" +
-                "\n Transfer Details "+
-                "\n ----------------------------" +
-                "\n Id: " + transferId +
-                "\n From: " + accountFrom.
-    }*/
-
 }
