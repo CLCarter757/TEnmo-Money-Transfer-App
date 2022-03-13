@@ -98,7 +98,7 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-            consoleService.printTransfers(transferService.listUserTransfers(), currentUser.getUser().getUsername());
+            consoleService.printTransfers(transferService.listUserTransferStrings(), currentUser.getUser().getUsername());
             Long transferId = consoleService.promptForTransferId();
             System.out.println(transferService.transferDetails(transferId));
     }
@@ -114,7 +114,8 @@ public class App {
         double amount = consoleService.promptForAmount();
 
         BasicTransferObject transfer = new BasicTransferObject(userId, amount);
-        System.out.println(transferService.sendTEBucks(transfer).toString());
+        transferService.sendTEBucks(transfer);
+        viewCurrentBalance();
 		
 	}
 

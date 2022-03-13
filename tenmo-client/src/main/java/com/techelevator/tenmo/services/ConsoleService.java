@@ -1,11 +1,10 @@
 package com.techelevator.tenmo.services;
 
 
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -119,22 +118,22 @@ public class ConsoleService {
     }
 
     public void printBalance(double balance) {
-        System.out.println("Your current balance is: $" + balance);
+        System.out.println("Your current balance is: $" + String.format("%.2f",balance));
     }
 
-    public void printTransfers(Transfer[] transfers, String username) {
+    public void printTransfers(TransferString[] transfers, String username) {
         System.out.println("-------------------------------------------\n" +
                 "Transfers\n" +
                 "ID          From/To                 Amount\n" +
-                "-------------------------------------------\n");
+                "-------------------------------------------");
 
-        for(Transfer transfer : transfers) {
-            if(Objects.equals(username, transfer.getUsernameFrom())) {
-                System.out.println(transfer.getTransferId() + "     To: " + transfer.getUsernameTo() +
-                        "    $" + transfer.getAmount());
-            } else if (Objects.equals(username, transfer.getUsernameTo())) {
-                System.out.println(transfer.getTransferId() + "     From: " + transfer.getUsernameFrom() +
-                        "    $" + transfer.getAmount());
+        for(TransferString transfer : transfers) {
+            if (Objects.equals(transfer.getUserFrom(), username)) {
+                System.out.println(transfer.getTransferId() + "        To: " + transfer.getUserTo() +
+                        "          $" + String.format("%.2f", transfer.getAmount()));
+            } else if (Objects.equals(transfer.getUserTo(), username)) {
+                System.out.println(transfer.getTransferId() + "        From: " + transfer.getUserFrom() +
+                        "        $" + String.format("%.2f", transfer.getAmount()));
             }
         }
     }
